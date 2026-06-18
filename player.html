@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body class="player">
   <!-- ========================================================================
@@ -83,7 +83,10 @@
     <p id="result-change" class="result-change"></p>
 
     <h2 class="lb-heading">Leaderboard</h2>
-    <ol id="result-leaderboard" class="player-leaderboard"></ol>
+    <div class="plb-table">
+      <div class="plb-head"><span>#</span><span>Team</span><span>Value</span></div>
+      <ol id="result-leaderboard" class="player-leaderboard"></ol>
+    </div>
 
     <p class="hint">Waiting for the next round…</p>
   </section>
@@ -96,7 +99,10 @@
     <p id="final-message" class="big"></p>
 
     <h2 class="lb-heading">Final standings</h2>
-    <ol id="final-leaderboard" class="player-leaderboard"></ol>
+    <div class="plb-table">
+      <div class="plb-head"><span>#</span><span>Team</span><span>Value</span></div>
+      <ol id="final-leaderboard" class="player-leaderboard"></ol>
+    </div>
   </section>
 
   <script type="module" src="player.js"></script>

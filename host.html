@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body class="host">
   <!-- ========================================================================
@@ -70,11 +70,16 @@
   <section id="phase-reveal" class="phase hidden">
     <h1 class="round-title">Results — <span id="reveal-title"></span></h1>
 
-    <h2 class="big">What the market did</h2>
+    <h2 class="section-label">What the market did</h2>
     <div id="moves-grid" class="moves-grid"></div>
 
-    <h2 class="big">Leaderboard</h2>
-    <ol id="leaderboard" class="leaderboard"></ol>
+    <h2 class="section-label">Leaderboard</h2>
+    <div class="lb-table">
+      <div class="lb-head">
+        <span>#</span><span>Team</span><span>Value</span><span>P&amp;L</span>
+      </div>
+      <ol id="leaderboard" class="leaderboard"></ol>
+    </div>
 
     <p id="reveal-debrief" class="debrief"></p>
 
@@ -85,8 +90,13 @@
 
   <!-- ---- PHASE: FINISHED (final ranking) ------------------------------- -->
   <section id="phase-finished" class="phase hidden">
-    <h1 class="brand">Final Results 🏆</h1>
-    <ol id="final-leaderboard" class="leaderboard leaderboard-final"></ol>
+    <h1 class="brand">Final Results</h1>
+    <div class="lb-table">
+      <div class="lb-head">
+        <span>#</span><span>Team</span><span>Value</span><span>P&amp;L</span>
+      </div>
+      <ol id="final-leaderboard" class="leaderboard leaderboard-final"></ol>
+    </div>
     <p class="hint">Refresh this page to host a brand-new game.</p>
   </section>
 
