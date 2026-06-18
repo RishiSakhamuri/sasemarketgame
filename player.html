@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SASE Market Game — Team</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="player">
+  <!-- ========================================================================
+       PLAYER / PHONE SCREEN
+       A simple controller. It reads the game state the host writes, and the
+       only thing it ever writes back is THIS team's choice for the round.
+       One phase <section> is visible at a time; player.js flips them.
+  ======================================================================== -->
+
+  <!-- ---- PHASE: JOIN (enter code + team name) -------------------------- -->
+  <section id="phase-join" class="phase">
+    <h1 class="brand">Join the Game</h1>
+    <form id="join-form" class="join-form">
+      <label>
+        Room code
+        <input id="input-code" type="text" maxlength="4" autocomplete="off"
+               autocapitalize="characters" placeholder="ABCD" required />
+      </label>
+      <label>
+        Team name
+        <input id="input-name" type="text" maxlength="24" autocomplete="off"
+               placeholder="The Diversifiers" required />
+      </label>
+      <button type="submit" class="btn btn-primary btn-xl">Join</button>
+      <p id="join-error" class="error hidden"></p>
+    </form>
+  </section>
+
+  <!-- ---- PHASE: LOBBY (waiting for host to start) ---------------------- -->
+  <section id="phase-lobby" class="phase hidden">
+    <h1 class="brand" id="lobby-team-name"></h1>
+    <p class="big">You're in! 🎉</p>
+    <div class="value-pill">Starting cash: <strong id="lobby-cash"></strong></div>
+    <p class="hint">Waiting for the host to start the game…</p>
+  </section>
+
+  <!-- ---- PHASE: DECIDE (allocate money, then Lock In) ------------------ -->
+  <section id="phase-decide" class="phase hidden">
+    <div class="player-topbar">
+      <span id="decide-quarter" class="pill"></span>
+      <span class="value-pill">Portfolio: <strong id="decide-value"></strong></span>
+    </div>
+
+    <h1 id="decide-title" class="round-title-sm"></h1>
+    <p id="decide-headline" class="round-headline"></p>
+
+    <p class="instructions">Type how many <strong>dollars</strong> to put in each
+      stock. Anything left over stays as cash.</p>
+
+    <!-- One row per stock is built by player.js -->
+    <div id="alloc-list" class="alloc-list"></div>
+
+    <div class="alloc-summary">
+      <div>Invested: <strong id="alloc-invested">$0</strong></div>
+      <div>Cash left: <strong id="alloc-cash">$0</strong></div>
+    </div>
+
+    <button id="btn-lockin" class="btn btn-primary btn-xl">Lock In</button>
+    <p id="alloc-warning" class="error hidden"></p>
+  </section>
+
+  <!-- ---- PHASE: WAIT (locked in; host hasn't revealed yet) ------------- -->
+  <section id="phase-wait" class="phase hidden">
+    <h1 class="brand">Locked in ✅</h1>
+    <p class="big">Look up at the screen — waiting for the reveal…</p>
+  </section>
+
+  <!-- ---- PHASE: RESULT (your new value + rank after a reveal) ---------- -->
+  <section id="phase-result" class="phase hidden">
+    <h1 class="brand">Round Results</h1>
+    <div class="value-pill big">Portfolio: <strong id="result-value"></strong></div>
+    <div class="rank-badge">Rank <span id="result-rank"></span> of <span id="result-total"></span></div>
+    <p id="result-change" class="result-change"></p>
+    <p class="hint">Waiting for the next round…</p>
+  </section>
+
+  <!-- ---- PHASE: FINISHED ---------------------------------------------- -->
+  <section id="phase-finished" class="phase hidden">
+    <h1 class="brand">Game Over 🏁</h1>
+    <div class="rank-badge big">Final rank: <span id="final-rank"></span> of <span id="final-total"></span></div>
+    <div class="value-pill big">Final portfolio: <strong id="final-value"></strong></div>
+    <p id="final-message" class="big"></p>
+  </section>
+
+  <script type="module" src="player.js"></script>
+</body>
+</html>

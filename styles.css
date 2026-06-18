@@ -1,0 +1,292 @@
+/* ===========================================================================
+   SASE Market Game — STYLES
+   Theme: maroon (#500000) + white. Big text for the projector, finger-sized
+   controls for phones. Edit the variables below to re-skin the whole game.
+   =========================================================================== */
+
+:root {
+  --maroon: #500000;
+  --maroon-light: #7a1f1f;
+  --maroon-dark: #3a0000;
+  --gold: #e3b23c;          /* accent for the "Reveal" button + winners */
+  --white: #ffffff;
+  --cream: #fbf7f4;
+  --ink: #2a1212;           /* near-black text with a warm tint */
+  --up: #1a7f37;            /* green for gains */
+  --down: #c0392b;          /* red for losses */
+  --radius: 14px;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+}
+
+/* ---- Layout ------------------------------------------------------------- */
+.phase {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 4vh 5vw;
+  text-align: center;
+}
+.hidden { display: none !important; }
+
+/* The host screen is on a projector: give it bigger base text. */
+body.host { background: var(--cream); }
+body.host .phase { max-width: 1100px; }
+body.host { font-size: 20px; }
+
+/* The player screen is a phone: tighter, single column. */
+body.player .phase { max-width: 520px; padding: 24px 18px; }
+
+/* ---- Typography --------------------------------------------------------- */
+.brand {
+  color: var(--maroon);
+  font-size: clamp(2rem, 6vw, 4rem);
+  margin: 0.2em 0;
+  letter-spacing: -0.02em;
+}
+.tagline { font-size: 1.2rem; color: var(--maroon-light); max-width: 40ch; margin: 0 auto 2em; }
+.big { font-size: clamp(1.1rem, 2.6vw, 1.7rem); }
+.hint { color: #6b5555; margin-top: 1.2em; line-height: 1.5; }
+.instructions { color: #6b5555; }
+
+/* ---- Buttons ------------------------------------------------------------ */
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.7em 1.4em;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.05s ease, filter 0.15s ease;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+
+.btn-primary { background: var(--maroon); color: var(--white); }
+.btn-gold { background: var(--gold); color: var(--maroon-dark); }
+.btn-ghost {
+  background: var(--white);
+  color: var(--maroon);
+  border: 3px solid var(--maroon);
+}
+.btn-xl { font-size: 1.4rem; padding: 0.8em 1.8em; }
+
+/* ---- Landing page ------------------------------------------------------- */
+.landing { padding-top: 8vh; }
+.landing-buttons { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; margin: 1em 0; }
+
+/* ---- Room code (lobby, host) ------------------------------------------- */
+.roomcode-box {
+  background: var(--maroon);
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 1em 1.5em;
+  display: inline-block;
+  margin: 0.5em 0 1.5em;
+  box-shadow: var(--shadow);
+}
+.roomcode-label { font-size: 1rem; letter-spacing: 0.3em; opacity: 0.8; }
+.roomcode {
+  font-size: clamp(3rem, 12vw, 7rem);
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  line-height: 1.1;
+}
+
+/* ---- Team lists / chips ------------------------------------------------- */
+.team-list {
+  list-style: none;
+  padding: 0;
+  margin: 1em auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  max-width: 900px;
+}
+.team-chip {
+  background: var(--white);
+  border: 2px solid var(--maroon-light);
+  border-radius: 999px;
+  padding: 0.5em 1.1em;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+.team-chip.locked { background: var(--maroon); color: var(--white); border-color: var(--maroon); }
+
+/* ---- Round screen (host) ----------------------------------------------- */
+.round-header { display: flex; gap: 10px; justify-content: center; margin-bottom: 0.5em; }
+.pill {
+  background: var(--maroon);
+  color: var(--white);
+  border-radius: 999px;
+  padding: 0.3em 1em;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.pill-ghost { background: transparent; color: var(--maroon); border: 2px solid var(--maroon); }
+
+.round-title { color: var(--maroon); font-size: clamp(1.8rem, 5vw, 3.2rem); margin: 0.2em 0; }
+.round-title-sm { color: var(--maroon); font-size: 1.6rem; margin: 0.2em 0; }
+.round-headline { font-size: clamp(1.2rem, 3vw, 1.9rem); font-weight: 600; max-width: 30ch; margin: 0.4em auto; }
+.round-detail { color: #6b5555; font-size: 1.15rem; max-width: 50ch; margin: 0.6em auto 1em; }
+
+/* ---- Timer -------------------------------------------------------------- */
+.timer-wrap { margin: 1em 0; }
+.timer {
+  font-size: clamp(3rem, 14vw, 8rem);
+  font-weight: 800;
+  color: var(--maroon);
+  line-height: 1;
+}
+.timer.urgent { color: var(--down); animation: pulse 0.6s infinite alternate; }
+.timer-label { letter-spacing: 0.2em; color: #6b5555; text-transform: uppercase; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.12); } }
+
+.host-controls { display: flex; gap: 14px; justify-content: center; margin-top: 1.2em; flex-wrap: wrap; }
+
+/* ---- Reveal: stock move cards ------------------------------------------ */
+.moves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 1em auto 1.5em;
+  max-width: 900px;
+}
+.move-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1em;
+  box-shadow: var(--shadow);
+  border-top: 8px solid #ccc;
+}
+.move-card.up { border-top-color: var(--up); }
+.move-card.down { border-top-color: var(--down); }
+.move-card.flat { border-top-color: #aaa; }
+.move-ticker { font-weight: 800; font-size: 1.3rem; color: var(--maroon); }
+.move-name { color: #6b5555; font-size: 0.95rem; }
+.move-pct { font-size: 2rem; font-weight: 800; margin: 0.2em 0; }
+.move-card.up .move-pct { color: var(--up); }
+.move-card.down .move-pct { color: var(--down); }
+.move-price { color: var(--ink); font-weight: 600; }
+
+/* ---- Leaderboard -------------------------------------------------------- */
+.leaderboard { list-style: none; padding: 0; margin: 1em auto; max-width: 760px; }
+.lb-row {
+  display: grid;
+  grid-template-columns: 2.5em 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 0.7em 1.1em;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  font-size: 1.25rem;
+  text-align: left;
+}
+.lb-rank { font-size: 1.5rem; text-align: center; }
+.lb-name { font-weight: 700; color: var(--maroon); }
+.lb-value { font-weight: 800; }
+.lb-profit { font-weight: 700; min-width: 6em; text-align: right; }
+.lb-profit.up { color: var(--up); }
+.lb-profit.down { color: var(--down); }
+.leaderboard-final .lb-row:first-child {
+  background: var(--maroon);
+  color: var(--white);
+  transform: scale(1.04);
+}
+.leaderboard-final .lb-row:first-child .lb-name { color: var(--gold); }
+
+.debrief {
+  background: #fff6e6;
+  border-left: 6px solid var(--gold);
+  border-radius: 8px;
+  padding: 1em 1.2em;
+  max-width: 720px;
+  margin: 1.5em auto;
+  text-align: left;
+  line-height: 1.55;
+  font-size: 1.1rem;
+}
+
+/* ---- Player: join form -------------------------------------------------- */
+.join-form { display: flex; flex-direction: column; gap: 1em; text-align: left; margin-top: 1em; }
+.join-form label { font-weight: 700; color: var(--maroon); display: flex; flex-direction: column; gap: 0.4em; }
+.join-form input {
+  font-size: 1.4rem;
+  padding: 0.6em;
+  border: 2px solid var(--maroon-light);
+  border-radius: var(--radius);
+}
+#input-code { text-transform: uppercase; letter-spacing: 0.3em; text-align: center; font-weight: 800; }
+.error { color: var(--down); font-weight: 700; }
+
+/* ---- Player: value pills & ranks --------------------------------------- */
+.value-pill {
+  display: inline-block;
+  background: var(--maroon);
+  color: var(--white);
+  border-radius: 999px;
+  padding: 0.5em 1.2em;
+  font-size: 1.2rem;
+  margin: 0.5em 0;
+}
+.value-pill strong { color: var(--gold); }
+.rank-badge {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--maroon);
+  margin: 0.4em 0;
+}
+.rank-badge.big { font-size: 2rem; }
+.result-change { font-size: 1.3rem; font-weight: 700; }
+.result-change.up { color: var(--up); }
+.result-change.down { color: var(--down); }
+
+/* ---- Player: allocation rows ------------------------------------------- */
+.player-topbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.alloc-list { display: flex; flex-direction: column; gap: 12px; margin: 1em 0; }
+.alloc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 0.8em 1em;
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+.alloc-ticker { font-weight: 800; color: var(--maroon); }
+.alloc-sector { font-size: 0.85rem; color: #6b5555; display: block; }
+.alloc-price { font-size: 0.9rem; color: #6b5555; }
+.alloc-input { display: flex; align-items: center; gap: 4px; font-size: 1.3rem; font-weight: 700; }
+.alloc-input input {
+  width: 6em;
+  font-size: 1.3rem;
+  padding: 0.4em;
+  border: 2px solid var(--maroon-light);
+  border-radius: 10px;
+  text-align: right;
+}
+.alloc-summary {
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.2rem;
+  margin: 1em 0;
+  font-weight: 700;
+}
+.alloc-summary .over { color: var(--down); }
