@@ -72,7 +72,24 @@ let roomRef = null;      // shortcut: ref(db, "rooms/TXKP")
 let teams = {};          // { teamId: {name, cash, shares, value, locked, ...} }
 let prices = {};         // current stock prices { tetra: 100, ... }
 let roundIndex = -1;     // which round we're on (-1 = lobby)
+let roundOrder = [];     // which scenarios (and order) this game uses, e.g. [3,0,5,1,4,2]
 let timerInterval = null;
+
+// Randomly shuffle an array in place (Fisher–Yates) and return it.
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// The scenario object for the round we're currently on. We don't use
+// ROUNDS[roundIndex] directly anymore — roundOrder maps the game's round
+// number to a (possibly random) scenario in game-data.js.
+function roundData() {
+  return ROUNDS[roundOrder[roundIndex]];
+}
 
 // ----------------------------------------------------------------------------
 //  1. CREATE THE ROOM (runs as soon as the host page loads)
@@ -85,6 +102,7 @@ async function createRoom() {
   await set(roomRef, {
     state: "lobby",        // lobby | round | locked | revealed | finished
     roundIndex: -1,        // -1 means "not started yet"
+    roundOrder: [],        // chosen at Start (see startGame)
     prices: startingPrices(),
     createdAt: serverTimestamp(),
     teams: {},             // filled in by players when they join
@@ -107,6 +125,7 @@ function listenToRoom() {
     teams = room.teams || {};
     prices = room.prices || startingPrices();
     roundIndex = room.roundIndex ?? -1;
+    roundOrder = room.roundOrder || [];
 
     // Re-render whichever phase we're in.
     if (room.state === "lobby") renderLobby();
@@ -142,9 +161,23 @@ function renderLobby() {
 }
 
 // ----------------------------------------------------------------------------
-//  3. START GAME -> begin round 0
+//  3. START GAME -> pick which scenarios to play, then begin round 0
 // ----------------------------------------------------------------------------
-$("btn-start").addEventListener("click", () => startRound(0));
+$("btn-start").addEventListener("click", startGame);
+
+async function startGame() {
+  // Decide how many rounds this game plays. You can add as many scenarios as
+  // you like to game-data.js; we shuffle them and take CONFIG.roundsPerGame.
+  // If there are fewer scenarios than that, we just use all of them.
+  const howMany = Math.min(CONFIG.roundsPerGame || ROUNDS.length, ROUNDS.length);
+
+  // [0,1,2,3,...] -> shuffled -> first `howMany`. This is the game's round list.
+  const order = shuffle([...ROUNDS.keys()]).slice(0, howMany);
+
+  await update(roomRef, { roundOrder: order });
+  roundOrder = order; // keep our local copy in sync before the first round
+  startRound(0);
+}
 
 async function startRound(index) {
   // Clear every team's "locked" flag and pending choice for the new round.
@@ -164,10 +197,10 @@ async function startRound(index) {
 // ----------------------------------------------------------------------------
 function renderRound(state) {
   showPhase("round");
-  const round = ROUNDS[roundIndex];
+  const round = roundData();
 
   $("round-quarter").textContent = round.quarter;
-  $("round-counter").textContent = `Round ${roundIndex + 1} of ${ROUNDS.length}`;
+  $("round-counter").textContent = `Round ${roundIndex + 1} of ${roundOrder.length}`;
   $("round-title").textContent = round.title;
   $("round-headline").textContent = round.headline;
   $("round-detail").textContent = round.detail;
@@ -236,7 +269,7 @@ async function lockDecisions() {
 $("btn-reveal").addEventListener("click", revealResults);
 
 async function revealResults() {
-  const round = ROUNDS[roundIndex];
+  const round = roundData();
 
   // STEP 1: For each team, first apply their locked-in allocation (if any),
   //         buying/selling shares at the CURRENT (pre-move) prices.
@@ -299,7 +332,7 @@ function currentValue(t) {
 function renderReveal() {
   showPhase("reveal");
   stopTimer();
-  const round = ROUNDS[roundIndex];
+  const round = roundData();
 
   $("reveal-title").textContent = round.title;
   $("reveal-debrief").textContent = round.debrief || "";
@@ -320,7 +353,7 @@ function renderReveal() {
   renderLeaderboard("leaderboard");
 
   // Last round? Switch the button to "See Final Results".
-  const isLastRound = roundIndex >= ROUNDS.length - 1;
+  const isLastRound = roundIndex >= roundOrder.length - 1;
   $("btn-next").textContent = isLastRound ? "See Final Results 🏆" : "Next Round";
 }
 
@@ -328,7 +361,7 @@ function renderReveal() {
 //  5. NEXT ROUND (or finish)
 // ----------------------------------------------------------------------------
 $("btn-next").addEventListener("click", async () => {
-  if (roundIndex >= ROUNDS.length - 1) {
+  if (roundIndex >= roundOrder.length - 1) {
     await update(roomRef, { state: "finished" });
   } else {
     startRound(roundIndex + 1);

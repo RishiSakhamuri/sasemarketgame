@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SASE Market Game — Team</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="player">
@@ -78,6 +81,10 @@
     <div class="value-pill big">Portfolio: <strong id="result-value"></strong></div>
     <div class="rank-badge">Rank <span id="result-rank"></span> of <span id="result-total"></span></div>
     <p id="result-change" class="result-change"></p>
+
+    <h2 class="lb-heading">Leaderboard</h2>
+    <ol id="result-leaderboard" class="player-leaderboard"></ol>
+
     <p class="hint">Waiting for the next round…</p>
   </section>
 
@@ -87,6 +94,9 @@
     <div class="rank-badge big">Final rank: <span id="final-rank"></span> of <span id="final-total"></span></div>
     <div class="value-pill big">Final portfolio: <strong id="final-value"></strong></div>
     <p id="final-message" class="big"></p>
+
+    <h2 class="lb-heading">Final standings</h2>
+    <ol id="final-leaderboard" class="player-leaderboard"></ol>
   </section>
 
   <script type="module" src="player.js"></script>

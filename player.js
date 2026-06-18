@@ -136,7 +136,9 @@ function renderDecide(room) {
   if (myTeam.locked) { renderWait(); return; }
 
   showPhase("decide");
-  const round = ROUNDS[room.roundIndex];
+  // roundOrder maps the game's round number to a scenario in game-data.js
+  // (the host shuffles + picks them at Start). Look it up the same way.
+  const round = ROUNDS[room.roundOrder[room.roundIndex]];
   const total = myValue();
 
   $("decide-quarter").textContent = round.quarter;
@@ -235,6 +237,9 @@ function renderResult(room) {
   $("result-change").textContent =
     (profit >= 0 ? "Up " : "Down ") + money(Math.abs(profit)) + " overall";
   $("result-change").className = "result-change " + (profit >= 0 ? "up" : "down");
+
+  // Live leaderboard so teams can see where they stand after each round.
+  renderPlayerLeaderboard(room.teams, "result-leaderboard");
 }
 
 // ----------------------------------------------------------------------------
@@ -250,6 +255,28 @@ function renderFinished(room) {
     rank === 1 ? "🏆 You won! Diversification paid off." :
     rank <= 3  ? "Great work — you finished on the podium!" :
                  "Thanks for playing! Check the big screen for the lesson.";
+
+  renderPlayerLeaderboard(room.teams, "final-leaderboard");
+}
+
+// Build a compact ranked leaderboard for the phone, highlighting MY team.
+function renderPlayerLeaderboard(teams, targetId) {
+  const ranked = Object.entries(teams)
+    .map(([id, t]) => ({ id, name: t.name, value: t.value ?? STARTING_CASH }))
+    .sort((a, b) => b.value - a.value);
+
+  $(targetId).innerHTML = ranked
+    .map((t, i) => {
+      const medal = ["🥇", "🥈", "🥉"][i] || `#${i + 1}`;
+      const mine = t.id === teamId ? "me" : "";
+      return `
+        <li class="plb-row ${mine}">
+          <span class="plb-rank">${medal}</span>
+          <span class="plb-name">${escapeHtml(t.name)}${mine ? " (you)" : ""}</span>
+          <span class="plb-value">${money(t.value)}</span>
+        </li>`;
+    })
+    .join("");
 }
 
 // Work out our rank by sorting all teams high -> low by value.

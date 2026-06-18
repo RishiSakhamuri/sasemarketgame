@@ -147,4 +147,10 @@ export const CONFIG = {
   roundTimerSeconds: 60,   // how long teams have to decide each round
   allowCash: true,         // can teams keep uninvested cash? (recommended: true)
   showSectorsToPlayers: true, // show each stock's sector on phones (teaching aid)
+
+  // How many rounds each game plays. Add as many scenarios to ROUNDS as you
+  // like — the host randomly shuffles them and picks this many at "Start".
+  // If you have FEWER scenarios than this, the game just uses all of them.
+  // Example: 10 scenarios in ROUNDS + roundsPerGame:6  ->  a random 6 each game.
+  roundsPerGame: 6,
 };
