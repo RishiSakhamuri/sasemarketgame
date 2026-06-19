@@ -252,9 +252,9 @@ function renderFinished(room) {
   $("final-total").textContent = total;
   $("final-value").textContent = money(myTeam.value);
   $("final-message").textContent =
-    rank === 1 ? "🏆 You won! Diversification paid off." :
-    rank <= 3  ? "Great work — you finished on the podium!" :
-                 "Thanks for playing! Check the big screen for the lesson.";
+    rank === 1 ? "First place — diversification paid off." :
+    rank <= 3  ? "Top three. Balanced, disciplined decisions." :
+                 "Solid run. Review the full breakdown on the main screen.";
 
   renderPlayerLeaderboard(room.teams, "final-leaderboard");
 }
@@ -267,12 +267,12 @@ function renderPlayerLeaderboard(teams, targetId) {
 
   $(targetId).innerHTML = ranked
     .map((t, i) => {
-      const medal = ["🥇", "🥈", "🥉"][i] || `#${i + 1}`;
+      const rankNum = String(i + 1).padStart(2, "0");
       const mine = t.id === teamId ? "me" : "";
       return `
         <li class="plb-row ${mine}">
-          <span class="plb-rank">${medal}</span>
-          <span class="plb-name">${escapeHtml(t.name)}${mine ? " (you)" : ""}</span>
+          <span class="plb-rank">${rankNum}</span>
+          <span class="plb-name">${escapeHtml(t.name)}${mine ? " · YOU" : ""}</span>
           <span class="plb-value">${money(t.value)}</span>
         </li>`;
     })

@@ -12,6 +12,15 @@
       "**/node_modules/**",
       "public/**",
       "skills-lock.json"
+    ],
+    "headers": [
+      {
+        "//": "Never cache the app files so updates show up immediately (no stale HTML/JS/CSS).",
+        "source": "**/*.@(html|js|css)",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, max-age=0, must-revalidate" }
+        ]
+      }
     ]
   }
 }

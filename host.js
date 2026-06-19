@@ -224,7 +224,7 @@ function renderRound(state) {
   $("round-teams").innerHTML = entries
     .map(([, t]) =>
       `<li class="team-chip ${t.locked ? "locked" : ""}">
-         ${escapeHtml(t.name)} ${t.locked ? "✅" : "…"}
+         <span class="chip-dot"></span>${escapeHtml(t.name)}
        </li>`)
     .join("");
 
@@ -374,7 +374,7 @@ function renderReveal() {
 
   // Last round? Switch the button to "See Final Results".
   const isLastRound = roundIndex >= roundOrder.length - 1;
-  $("btn-next").textContent = isLastRound ? "See Final Results 🏆" : "Next Round";
+  $("btn-next").textContent = isLastRound ? "See Final Results" : "Next Round";
 }
 
 // ----------------------------------------------------------------------------
@@ -409,11 +409,11 @@ function renderLeaderboard(targetId) {
     .map((t, i) => {
       const value = t.value ?? STARTING_CASH;
       const profit = value - STARTING_CASH;
-      const medal = ["🥇", "🥈", "🥉"][i] || `#${i + 1}`;
+      const rankNum = String(i + 1).padStart(2, "0");
       const profitCls = profit >= 0 ? "up" : "down";
       return `
         <li class="lb-row">
-          <span class="lb-rank">${medal}</span>
+          <span class="lb-rank">${rankNum}</span>
           <span class="lb-name">${escapeHtml(t.name)}</span>
           <span class="lb-value">${money(value)}</span>
           <span class="lb-profit ${profitCls}">${profit >= 0 ? "+" : ""}${money(profit)}</span>

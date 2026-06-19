@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body class="player">
   <!-- ========================================================================
@@ -44,10 +44,12 @@
 
   <!-- ---- PHASE: LOBBY (waiting for host to start) ---------------------- -->
   <section id="phase-lobby" class="phase hidden">
-    <h1 class="brand" id="lobby-team-name"></h1>
-    <p class="big">You're in! 🎉</p>
-    <div class="value-pill">Starting cash: <strong id="lobby-cash"></strong></div>
-    <p class="hint">Waiting for the host to start the game…</p>
+    <div class="status">
+      <div class="status-eyebrow"><span class="status-dot ok"></span>Connected</div>
+      <h1 class="status-head" id="lobby-team-name"></h1>
+      <div class="kv-tag">Starting balance <strong id="lobby-cash"></strong></div>
+      <p class="status-sub">Standing by for the host to open the first quarter.</p>
+    </div>
   </section>
 
   <!-- ---- PHASE: DECIDE (allocate money, then Lock In) ------------------ -->
@@ -77,15 +79,21 @@
 
   <!-- ---- PHASE: WAIT (locked in; host hasn't revealed yet) ------------- -->
   <section id="phase-wait" class="phase hidden">
-    <h1 class="brand">Locked in ✅</h1>
-    <p class="big">Look up at the screen — waiting for the reveal…</p>
+    <div class="status">
+      <div class="check-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path d="M13 24.5 l7 7 l15 -16" /></svg>
+      </div>
+      <h1 class="status-head">Orders Locked</h1>
+      <p class="status-sub">Your positions are submitted. Watch the main screen for the market reveal.</p>
+      <div class="status-eyebrow"><span class="status-dot pulse"></span>Awaiting reveal</div>
+    </div>
   </section>
 
   <!-- ---- PHASE: RESULT (your new value + rank after a reveal) ---------- -->
   <section id="phase-result" class="phase hidden">
-    <h1 class="brand">Round Results</h1>
-    <div class="value-pill big">Portfolio: <strong id="result-value"></strong></div>
-    <div class="rank-badge">Rank <span id="result-rank"></span> of <span id="result-total"></span></div>
+    <div class="status-eyebrow center">Round settled</div>
+    <div class="result-value-big" id="result-value"></div>
+    <div class="rank-badge">Rank <span id="result-rank"></span> / <span id="result-total"></span></div>
     <p id="result-change" class="result-change"></p>
 
     <h2 class="lb-heading">Leaderboard</h2>
@@ -99,10 +107,10 @@
 
   <!-- ---- PHASE: FINISHED ---------------------------------------------- -->
   <section id="phase-finished" class="phase hidden">
-    <h1 class="brand">Game Over 🏁</h1>
-    <div class="rank-badge big">Final rank: <span id="final-rank"></span> of <span id="final-total"></span></div>
-    <div class="value-pill big">Final portfolio: <strong id="final-value"></strong></div>
-    <p id="final-message" class="big"></p>
+    <div class="status-eyebrow center">Session complete</div>
+    <div class="rank-badge big">Final rank <span id="final-rank"></span> / <span id="final-total"></span></div>
+    <div class="result-value-big" id="final-value"></div>
+    <p id="final-message" class="status-sub"></p>
 
     <h2 class="lb-heading">Final standings</h2>
     <div class="plb-table">
