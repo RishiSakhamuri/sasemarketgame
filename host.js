@@ -58,6 +58,14 @@ function startingPrices() {
   return prices;
 }
 
+// Price history per stock, e.g. { tetra: [100], verde: [60], ... }. We append
+// the new price each reveal so the projector can draw a little sparkline.
+function startingHistory() {
+  const hist = {};
+  for (const s of STOCKS) hist[s.id] = [s.startPrice];
+  return hist;
+}
+
 // Show exactly one phase <section> and hide the others.
 function showPhase(name) {
   for (const el of document.querySelectorAll(".phase")) el.classList.add("hidden");
@@ -71,6 +79,7 @@ let roomCode = null;     // e.g. "TXKP"
 let roomRef = null;      // shortcut: ref(db, "rooms/TXKP")
 let teams = {};          // { teamId: {name, cash, shares, value, locked, ...} }
 let prices = {};         // current stock prices { tetra: 100, ... }
+let priceHistory = {};   // price per stock over time, for sparklines
 let roundIndex = -1;     // which round we're on (-1 = lobby)
 let roundOrder = [];     // which scenarios (and order) this game uses, e.g. [3,0,5,1,4,2]
 let timerInterval = null;
@@ -104,6 +113,7 @@ async function createRoom() {
     roundIndex: -1,        // -1 means "not started yet"
     roundOrder: [],        // chosen at Start (see startGame)
     prices: startingPrices(),
+    priceHistory: startingHistory(),
     createdAt: serverTimestamp(),
     teams: {},             // filled in by players when they join
   });
@@ -124,6 +134,7 @@ function listenToRoom() {
 
     teams = room.teams || {};
     prices = room.prices || startingPrices();
+    priceHistory = room.priceHistory || startingHistory();
     roundIndex = room.roundIndex ?? -1;
     roundOrder = room.roundOrder || [];
 
@@ -297,15 +308,21 @@ async function revealResults() {
     teamUpdates[id] = { cash, shares };
   }
 
-  // STEP 2: Move the prices by this round's percentages.
+  // STEP 2: Move the prices by this round's percentages, and record the new
+  // price in each stock's history (so the reveal screen can draw a sparkline).
   const newPrices = {};
+  const updates = { state: "revealed" };
   for (const s of STOCKS) {
     const move = round.moves[s.id] ?? 0;
     newPrices[s.id] = prices[s.id] * (1 + move / 100);
+
+    const hist = (priceHistory[s.id] || [prices[s.id]]).slice();
+    hist.push(newPrices[s.id]);
+    updates[`priceHistory/${s.id}`] = hist;
   }
+  updates.prices = newPrices;
 
   // STEP 3: Recompute each team's portfolio value at the NEW prices.
-  const updates = { prices: newPrices, state: "revealed" };
   for (const [id, holding] of Object.entries(teamUpdates)) {
     let value = holding.cash;
     for (const s of STOCKS) value += (holding.shares[s.id] || 0) * newPrices[s.id];
@@ -337,15 +354,18 @@ function renderReveal() {
   $("reveal-title").textContent = round.title;
   $("reveal-debrief").textContent = round.debrief || "";
 
-  // Grid of stock moves.
+  // Grid of stock "quote" tiles: ticker + % move, a price sparkline, and price.
   $("moves-grid").innerHTML = STOCKS.map((s) => {
     const move = round.moves[s.id] ?? 0;
     const cls = move > 0 ? "up" : move < 0 ? "down" : "flat";
     return `
       <div class="move-card ${cls}">
-        <div class="move-ticker">${s.ticker}</div>
+        <div class="move-head">
+          <span class="move-ticker">${s.ticker}</span>
+          <span class="move-pct">${pct(move)}</span>
+        </div>
         <div class="move-name">${escapeHtml(s.name)}</div>
-        <div class="move-pct">${pct(move)}</div>
+        ${sparkline(priceHistory[s.id], cls)}
         <div class="move-price">${money(prices[s.id])}</div>
       </div>`;
   }).join("");
@@ -400,6 +420,34 @@ function renderLeaderboard(targetId) {
         </li>`;
     })
     .join("");
+}
+
+// Build a tiny inline SVG line chart of a stock's price history.
+//   values: array of prices, e.g. [100, 118, 104, ...]
+//   cls:    "up" | "down" | "flat" (controls the line color)
+// Returns an <svg> string; the polyline is normalized to fit the box.
+function sparkline(values, cls) {
+  const w = 150, h = 38, pad = 4;
+  if (!values || values.length < 2) {
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}"></svg>`; // not enough data yet
+  }
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = (max - min) || 1;          // avoid divide-by-zero if flat
+  const step = (w - 2 * pad) / (values.length - 1);
+
+  const points = values.map((v, i) => {
+    const x = pad + i * step;
+    const y = h - pad - ((v - min) / range) * (h - 2 * pad); // higher price = higher up
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const [lastX, lastY] = points[points.length - 1].split(",");
+
+  return `
+    <svg class="spark spark-${cls}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <polyline points="${points.join(" ")}" />
+      <circle cx="${lastX}" cy="${lastY}" r="2.4" class="spark-dot" />
+    </svg>`;
 }
 
 // Prevent a mischievous team name from injecting HTML.

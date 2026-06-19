@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body class="player">
   <!-- ========================================================================
@@ -16,6 +16,12 @@
        only thing it ever writes back is THIS team's choice for the round.
        One phase <section> is visible at a time; player.js flips them.
   ======================================================================== -->
+
+  <!-- Slim application top bar. -->
+  <header class="appbar">
+    <span class="appbar-brand">SASE<span>/</span>MARKET</span>
+    <span class="appbar-meta">Team Terminal</span>
+  </header>
 
   <!-- ---- PHASE: JOIN (enter code + team name) -------------------------- -->
   <section id="phase-join" class="phase">

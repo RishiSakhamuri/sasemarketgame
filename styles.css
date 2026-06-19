@@ -1,9 +1,10 @@
 /* ===========================================================================
-   SASE Market Game — STYLES  (v4: sharp "trading desk" theme)
+   SASE Market Game — STYLES  (v5: full-bleed "trading desk" app)
    --------------------------------------------------------------------------
-   Refined from v3 to shed the generic look: tight corners, hairline borders,
-   solid (non-glass) surfaces, real data-tables with column headers, and
-   restrained accents. Dark maroon palette kept.
+   v5 removes the last "AI" tells: no floating rounded card (content sits on a
+   full-width app surface under a sticky top bar), squared-off uppercase
+   buttons, hairline borders, real data-tables, and price sparklines.
+   Dark maroon palette kept.
    - Headings:  Space Grotesk
    - Body:      Inter
    - Numbers/tickers/labels: JetBrains Mono   (loaded in each .html <head>)
@@ -72,33 +73,68 @@ h1, h2, h3 { font-family: var(--font-head); letter-spacing: -0.01em; }
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- Panel that holds each screen --------------------------------------- */
+/* ---- Application top bar (full-width, like a real dashboard chrome) ----- */
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7em clamp(16px, 4vw, 40px);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.appbar-brand {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.02rem;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.appbar-brand span { color: var(--crimson); margin: 0 0.05em; }
+.appbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+}
+/* Pulsing "live" dot — a small real-product signal. */
+.appbar-meta::before {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--up);
+  animation: live 1.6s ease-in-out infinite;
+}
+@keyframes live { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ---- Content region (no floating card — content sits on the app surface) */
 .phase,
 .landing {
   position: relative;
-  max-width: 960px;
-  margin: 4vh auto;
-  padding: clamp(24px, 3.4vw, 46px);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--maroon-bright);   /* single branded top edge */
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: clamp(22px, 3.4vw, 44px) clamp(16px, 4vw, 40px) 60px;
   text-align: center;
 }
 
 .phase:not(.hidden),
-.landing { animation: rise 0.32s ease both; }
+.landing { animation: rise 0.28s ease both; }
 @keyframes rise {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: none; }
 }
 
 .hidden { display: none !important; }
 
 body.host { font-size: 19px; }
-body.host .phase { max-width: 1120px; }
-body.player .phase { max-width: 540px; padding: 22px 18px; margin: 2.5vh auto; }
+body.host .phase { max-width: 1160px; }
+body.player .phase { max-width: 560px; padding: 22px 18px 50px; }
 
 /* ---- Typography --------------------------------------------------------- */
 .brand {
@@ -132,11 +168,13 @@ body.player .phase { max-width: 540px; padding: 22px 18px; margin: 2.5vh auto; }
 .btn {
   display: inline-block;
   border: 1px solid transparent;
-  border-radius: 5px;
-  padding: 0.72em 1.7em;
+  border-radius: 3px;
+  padding: 0.7em 1.6em;
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
@@ -260,19 +298,32 @@ body.player .phase { max-width: 540px; padding: 22px 18px; margin: 2.5vh auto; }
 }
 .move-card.up { border-left-color: var(--up); }
 .move-card.down { border-left-color: var(--down); }
+.move-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .move-ticker { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: 0.05em; }
-.move-name { color: var(--text-faint); font-size: 0.82rem; margin-top: 1px; }
+.move-name { color: var(--text-faint); font-size: 0.8rem; margin-top: 1px; }
 .move-pct {
-  font-size: 1.85rem; font-weight: 700; margin: 0.35em 0 0.05em;
-  display: flex; align-items: baseline; gap: 0.25em;
-  border-top: 1px solid var(--border); padding-top: 0.35em;
+  font-size: 1.35rem; font-weight: 700;
+  display: flex; align-items: baseline; gap: 0.2em;
 }
 .move-card.up .move-pct { color: var(--up); }
 .move-card.down .move-pct { color: var(--down); }
 .move-card.flat .move-pct { color: var(--text-dim); }
-.move-card.up .move-pct::before { content: "\25B2"; font-size: 0.62em; }
-.move-card.down .move-pct::before { content: "\25BC"; font-size: 0.62em; }
-.move-price { color: var(--text-dim); font-weight: 500; font-size: 0.9rem; }
+.move-card.up .move-pct::before { content: "\25B2"; font-size: 0.6em; }
+.move-card.down .move-pct::before { content: "\25BC"; font-size: 0.6em; }
+.move-price { color: var(--text-dim); font-weight: 500; font-size: 0.88rem; }
+
+/* Price-history sparkline (inline SVG drawn by host.js). */
+.spark {
+  display: block;
+  width: 100%;
+  height: 38px;
+  margin: 0.6em 0 0.4em;
+}
+.spark polyline { fill: none; stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+.spark .spark-dot { stroke: none; }
+.spark-up polyline, .spark-up .spark-dot { stroke: var(--up); fill: var(--up); }
+.spark-down polyline, .spark-down .spark-dot { stroke: var(--down); fill: var(--down); }
+.spark-flat polyline, .spark-flat .spark-dot { stroke: var(--text-dim); fill: var(--text-dim); }
 
 /* ---- Leaderboard as a real data table ---------------------------------- */
 .lb-table {
